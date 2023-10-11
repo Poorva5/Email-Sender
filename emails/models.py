@@ -16,6 +16,6 @@ class Recipient(models.Model):
 class EmailLog(models.Model):
     template = models.ForeignKey('EmailTemplate', on_delete=models.CASCADE)
     recipient = models.ForeignKey('Recipient', on_delete=models.CASCADE)
-    send_at = models.DateTimeField(auto_now_add=True)
-    send_by = models.ForeignKey(User, on_delete=models.CASCADE)
+    sent_at = models.DateTimeField(auto_now_add=True)
+    sent_by = models.ForeignKey(User, on_delete=models.CASCADE)
     

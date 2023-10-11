@@ -15,7 +15,7 @@ admin.site.register(EmailAttachement, EmailAttachementAdmin)
 
 
 class EmailLogAdmin(admin.ModelAdmin):
-    list_display = ['template', 'send_at', 'send_by']
+    list_display = ['template', 'sent_at', 'sent_by']
 
 admin.site.register(EmailLog, EmailLogAdmin)
 

@@ -21,11 +21,49 @@ class SendEmailView(APIView):
 
         from_email = settings.EMAIL_HOST_USER
 
-        try:
-            send_mail(subject, message_body, from_email, recipients_emails)
-            return Response({'message': 'Email sent successfully!'}, status=status.HTTP_200_OK)
+        for recipient_email in recipients_emails:
+            send_mail(subject, message_body, from_email, [recipient_email])
+
+        return Response({'message': 'Email sent successfully!'}, status=status.HTTP_200_OK)
+    
+
+
+class SendTemplateEmail(APIView):
+
+    def post(self, request):
+
+        template_id = request.data.get('template_id')
+        email_template = EmailTemplate.objects.get(pk=template_id)
+        email_subject = email_template.subject
+        email_body = email_template.body
+
+        recipients_emails= request.data.get('recipients')
+        if not isinstance(recipients_emails, (list, tuple)):
+            recipients_emails = [recipients_emails]
+
+        from_email = settings.EMAIL_HOST_USER
+        for recipient_email in recipients_emails:
+            send_mail(
+                email_subject,
+                email_body,
+                from_email,
+                [recipient_email]
+            )
+
+            email_log = EmailLog.objects.create(
+                template=email_template,
+                sent_by=request.user,
+            )
+            email_log.recipients.add(recipient_email)
+
+        return Response({'message': 'Emails sent successfully'}, status=status.HTTP_200_OK)
+
+
+
+
+
+
         
-        except Exception as e:
-            return Response({'message': 'Something Went Wrong'}, status=status.HTTP_400_BAD_REQUEST)
+
 
 
